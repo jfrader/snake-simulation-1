@@ -54,8 +54,7 @@ var current_type: String
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	self.hide()
-	respawn()
-	create_collision(food_types[current_type]["polygon"])
+	respawn(true)
 
 func choose_random_food_type():
 	var random_value = randf()
@@ -91,7 +90,7 @@ func create_collision(vec):
 	collision_area.add_child(collision_poly)
 
 # Optional: Function to respawn food in a new location
-func respawn():
+func respawn(do_create_collision: bool):
 	var viewport_size = get_viewport().get_visible_rect().size
 	current_type = choose_random_food_type()  # Change type on respawn with different chances
 	set_food_type(current_type)
@@ -99,6 +98,9 @@ func respawn():
 	var random_x = randf_range(0 + food_types[current_type]["size"], viewport_size.x - food_types[current_type]["size"])
 	var random_y = randf_range(0 + food_types[current_type]["size"], viewport_size.y - food_types[current_type]["size"])
 	position = Vector2(random_x, random_y)
+	
+	if do_create_collision:
+		create_collision(food_types[current_type]["polygon"])
 	
 	# Update the collision polygon to match the new position and type
 	if collision_poly:

@@ -14,12 +14,11 @@ func _ready():
 	food.show()
 	snake.show()
 
-func _process(delta):
+func _process(_delta):
 	check_collision()
 	update_ui()
 	
 func create_ui():
-	var viewport_size = get_viewport().get_visible_rect().size
 	ui_score = Label.new()
 	update_ui()
 	ui_score.set_position(Vector2(20, 10))

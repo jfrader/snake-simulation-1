@@ -1,6 +1,6 @@
 extends Line2D
 
-var start_speed = 300
+var start_speed = 300.0
 var speed = start_speed
 var direction = Vector2.RIGHT
 
@@ -12,7 +12,7 @@ func _ready():
 	self.hide()
 	var viewport_size = get_viewport_rect().size
 	var first_position = Vector2(viewport_size.x / 2, viewport_size.y / 2)
-	set_point_position(0, first_position)
+	add_point(first_position)
 	# Start with a small snake
 	for i in range(9):
 		add_point(Vector2(first_position.x + i * 5, first_position.y))
@@ -61,7 +61,7 @@ func _process(delta):
 	for i in range(1, points.size()):
 		var prev_position = points[i - 1]
 		var current_position = points[i]
-		points[i] = current_position.lerp(prev_position, delta * (speed/10))  # Smooth movement
+		points[i] = current_position.lerp(prev_position, delta * (speed/10.0))  # Smooth movement
 	
 	# Update head collision to follow the head's position
 	update_head_collision()
