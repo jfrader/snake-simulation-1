@@ -56,4 +56,4 @@ func check_collision():
 			if Geometry2D.intersect_polygons(global_snake_polygon, global_food_polygon).size() > 0:
 				snake.grow(food.score)
 				score += food.score
-				food.respawn()
+				food.respawn(false)
