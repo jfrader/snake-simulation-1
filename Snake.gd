@@ -3,16 +3,22 @@ extends Line2D
 var start_speed = 300.0
 var speed = start_speed
 var direction = Vector2.RIGHT
-var head_area: Area2D
-var collision_poly: CollisionPolygon2D
 var time = 0.0  # Time counter for the wave effect
 var wave_amplitude = 1.0  # How much the points will move up and down
 var wave_frequency = 20.0  # Frequency of the wave
 
+@onready var collision_poly: CollisionPolygon2D = $Area2D/CollisionPolygon2D
+@onready var head_area: Area2D = $Area2D
+
 func _ready():
 	self.hide()
+	
+	for child in get_children():
+		if !child.is_node_ready():
+			await child.ready
+	
 	var viewport_size = get_viewport_rect().size
-	var first_position = Vector2(viewport_size.x / 2, viewport_size.y / 2)
+	var first_position = Vector2(0, 0)
 	add_point(first_position)
 
 	for i in range(9):
@@ -23,26 +29,16 @@ func _ready():
 	self.begin_cap_mode = Line2D.LINE_CAP_ROUND
 	self.end_cap_mode = Line2D.LINE_CAP_ROUND
 	
-	create_head_collision()
+	adjust_head_collision()
 	adjust_width_curve()
+
+	self.show()
 
 	
 func grow_width(size):
 	if self.width < 16:
 		self.width += 0.05 * size
 		adjust_head_collision()
-
-func create_head_collision():
-	head_area = Area2D.new()
-	head_area.name = "HeadArea"
-	add_child(head_area)
-	
-	collision_poly = CollisionPolygon2D.new()
-	collision_poly.name = "CollisionPolygon2D"
-	
-	adjust_head_collision()
-	
-	head_area.add_child(collision_poly)
 	
 func adjust_head_collision():
 	var head_polygon = PackedVector2Array([
