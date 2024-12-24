@@ -5,6 +5,9 @@ var speed = start_speed
 var direction = Vector2.RIGHT
 var head_area: Area2D
 var collision_poly: CollisionPolygon2D
+var time = 0.0  # Time counter for the wave effect
+var wave_amplitude = 1.0  # How much the points will move up and down
+var wave_frequency = 20.0  # Frequency of the wave
 
 func _ready():
 	self.hide()
@@ -51,17 +54,25 @@ func adjust_head_collision():
 	collision_poly.polygon = head_polygon
 
 func _process(delta):
+	time += delta
+	
 	var head_position = points[0] + direction * speed * delta
-	points[0] = head_position
+	points[0] = head_position  # Update head position without vibration
 
-	for i in range(1, points.size()):
+	for i in range(1, points.size()):  # Start from 1 to skip the head
 		var prev_position = points[i - 1]
 		var current_position = points[i]
-		points[i] = current_position.lerp(prev_position, delta * (speed/10.0))
-	
+		
+		# Calculate the direction of vibration (perpendicular to movement)
+		var vibration_direction = Vector2(direction.y, -direction.x).normalized()
+		
+		# Apply sine wave in the direction perpendicular to movement, but only for body segments
+		var offset = vibration_direction * (sin(time * wave_frequency + i * 0.1) * wave_amplitude)
+		
+		# Smooth movement towards the previous point with added wave effect
+		points[i] = current_position.lerp(prev_position + offset, delta * (speed/10.0))
 
 	update_head_collision()
-	
 
 	var screen_size = get_viewport().get_visible_rect().size
 	if head_position.x < 0 or head_position.x > screen_size.x:
